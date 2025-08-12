@@ -1,0 +1,26 @@
+# Guile compiled files
+*.go
+*~
+
+# Emacs
+.#*
+\#*#
+
+# Vim
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test output
+test-results/
+*.log
+
+# REPL history
+.monkey_history
+
+# Build artifacts
+build/
+dist/
