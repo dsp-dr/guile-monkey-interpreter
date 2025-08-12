@@ -1,10 +1,22 @@
 # Guile Monkey Interpreter
 
-A Scheme implementation of the Monkey programming language interpreter from Thorsten Ball's ["Writing An Interpreter in Go"](https://interpreterbook.com/), written in Guile Scheme.
+[![Guile](https://img.shields.io/badge/Guile-3.0%2B-blue.svg)](https://www.gnu.org/software/guile/)
+[![Tests](https://img.shields.io/badge/Tests-98.6%25-success.svg)](https://github.com/dsp-dr/guile-monkey-interpreter)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Language](https://img.shields.io/badge/Language-Scheme-red.svg)](https://www.scheme.org/)
+[![asciinema](https://img.shields.io/badge/Demo-asciinema-orange.svg)](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh)
+
+A Scheme implementation of the Monkey programming language interpreter from Thorsten Ball's ["Writing An Interpreter in Go"](https://interpreterbook.com/), written in GNU Guile Scheme.
 
 ## Overview
 
 This project implements a complete interpreter for the Monkey programming language, following the book's structure but adapted for Scheme idioms and extended with additional features.
+
+## 🎬 Live Demo
+
+[![asciicast](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh.svg)](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh)
+
+*Watch the interpreter in action, demonstrating arithmetic, functions, arrays, and Chapter 4 extensions*
 
 ### Features
 
@@ -17,6 +29,16 @@ This project implements a complete interpreter for the Monkey programming langua
 - ✅ REPL (Read-Eval-Print-Loop)
 - 🔧 **Extension**: While loops
 - 🔧 **Extension**: Enhanced error messages
+- 🚀 **Chapter 4**: Extended built-in functions
+  - `type()` - Get object type
+  - `str()` - Convert to string
+  - `int()` - Parse integer
+  - `split()` - Split strings
+  - `join()` - Join arrays
+  - `contains()` - Check containment
+  - `keys()` - Get hash keys
+  - `values()` - Get hash values
+  - `delete()` - Delete from hash
 
 ## Project Structure
 
@@ -55,11 +77,14 @@ guile-monkey-interpreter/
 git clone https://github.com/dsp-dr/guile-monkey-interpreter.git
 cd guile-monkey-interpreter
 
-# Run the REPL
-./monkey
+# Run the complete interpreter
+gmake repl
 
-# Or use Guile directly
-guile -L src --no-auto-compile -l src/monkey/main.scm
+# Or run directly
+guile -L src src/monkey/main.scm
+
+# Run tests
+gmake test
 ```
 
 ### Running Tests

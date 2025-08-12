@@ -1,3 +1,0 @@
-{"version": 2, "width": 80, "height": 24, "timestamp": 1755026832, "idle_time_limit": 2.0, "env": {"SHELL": "/usr/local/bin/bash", "TERM": "xterm-256color"}, "title": "Guile Monkey Interpreter - Interactive Demo"}
-[0.528065, "o", "\u001b[?2004h"]
-[0.52899, "o", "\r\n\u001b[1;33mdsp-dr\u001b[0m in \u001b[1;2;32m🌐 nexushive\u001b[0m in \u001b[1;36mguile-monkey-interpreter\u001b[0m on \u001b[1;35m main\u001b[0m \u001b[1;31m[?]\u001b[0m \r\n\u001b[1;32m❯\u001b[0m "]
