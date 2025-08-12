@@ -14,7 +14,7 @@ CODE_02_DIR = code/02
 SOURCES = $(shell find $(SRC_DIR) -name "*.scm" 2>/dev/null || echo "")
 TESTS = $(shell find $(TEST_DIR) -name "*-test.scm" 2>/dev/null || echo "")
 
-.PHONY: all test test-01 test-02 test-lexer test-parser repl-01 repl-02 clean check compile help
+.PHONY: all test test-01 test-02 test-03 test-lexer test-parser test-evaluator repl-01 repl-02 repl-03 clean check compile help
 
 # Default target
 all: help
@@ -26,12 +26,14 @@ help:
 	@echo "  make test        - Run all tests"
 	@echo "  make test-01     - Run Chapter 01 (lexer) tests"
 	@echo "  make test-02     - Run Chapter 02 (parser) tests"
+	@echo "  make test-03     - Run Chapter 03 (evaluator) tests"
 	@echo "  make test-lexer  - Run lexer tests from tests/ directory"
 	@echo "  make test-parser - Run parser tests from tests/ directory"
 	@echo ""
 	@echo "REPL targets:"
 	@echo "  make repl-01     - Start Chapter 01 lexer REPL"
 	@echo "  make repl-02     - Start Chapter 02 parser REPL"
+	@echo "  make repl-03     - Start Chapter 03 evaluator REPL (full interpreter)"
 	@echo ""
 	@echo "Other targets:"
 	@echo "  make check       - Check syntax of all source files"
@@ -40,7 +42,7 @@ help:
 	@echo "  make help        - Show this help"
 
 # Run all tests
-test: test-01 test-02
+test: test-01 test-02 test-03
 	@echo ""
 	@echo "========================================="
 	@echo "All tests completed!"
@@ -83,6 +85,18 @@ repl-01:
 repl-02:
 	@echo "Starting Chapter 02 - Parser REPL..."
 	@cd $(CODE_02_DIR) && $(GUILE) $(GUILE_FLAGS) -L src src/monkey/main.scm
+
+# Chapter 03 - Evaluator tests
+test-03:
+	@echo ""
+	@echo "Running Chapter 03 - Evaluator Tests..."
+	@echo "========================================="
+	@cd code/03 && ./run-tests.scm
+
+# Chapter 03 REPL
+repl-03:
+	@echo "Starting Chapter 03 - Full Monkey Interpreter..."
+	@cd code/03 && $(GUILE) $(GUILE_FLAGS) -L src src/monkey/main.scm
 
 # Check syntax of source files
 check:
