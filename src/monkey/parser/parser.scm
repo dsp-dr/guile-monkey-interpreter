@@ -16,6 +16,16 @@
             parser?))
 
 ;;; ============================================================================
+;;; Early return support using call/cc
+;;; ============================================================================
+
+(define-syntax with-return
+  (syntax-rules ()
+    ((with-return body ...)
+     (call/cc (lambda (return)
+                body ...)))))
+
+;;; ============================================================================
 ;;; Precedence Levels
 ;;; ============================================================================
 
@@ -175,22 +185,23 @@
 
 (define (parse-let-statement parser)
   "Parse let statement: let <identifier> = <expression>"
-  (let ((stmt-token (parser-cur-token parser)))
-    (unless (expect-peek! parser IDENT)
-      (return #f))
-    
-    (let ((name (make-identifier (parser-cur-token parser)
-                                 (token-literal (parser-cur-token parser)))))
-      (unless (expect-peek! parser ASSIGN)
+  (with-return
+    (let ((stmt-token (parser-cur-token parser)))
+      (unless (expect-peek! parser IDENT)
         (return #f))
       
-      (next-token! parser)
-      
-      (let ((value (parse-expression parser LOWEST)))
-        (when (peek-token-is? parser SEMICOLON)
-          (next-token! parser))
+      (let ((name (make-identifier (parser-cur-token parser)
+                                   (token-literal (parser-cur-token parser)))))
+        (unless (expect-peek! parser ASSIGN)
+          (return #f))
         
-        (make-let-statement stmt-token name value)))))
+        (next-token! parser)
+        
+        (let ((value (parse-expression parser LOWEST)))
+          (when (peek-token-is? parser SEMICOLON)
+            (next-token! parser))
+          
+          (make-let-statement stmt-token name value))))))
 
 (define (parse-return-statement parser)
   "Parse return statement: return <expression>"
@@ -214,30 +225,31 @@
 
 (define (parse-expression parser precedence)
   "Parse expression with precedence"
-  (let* ((type (token-type (parser-cur-token parser)))
-         (prefix-fn (hash-table-ref/default 
-                     (parser-prefix-parse-fns parser) 
-                     type 
-                     #f)))
-    (unless prefix-fn
-      (no-prefix-parse-fn-error! parser type)
-      (return #f))
-    
-    (let ((left-exp (prefix-fn parser)))
-      (let loop ((left left-exp))
-        (if (and (not (peek-token-is? parser SEMICOLON))
-                 (< precedence (peek-precedence parser)))
-            (let* ((infix-type (token-type (parser-peek-token parser)))
-                   (infix-fn (hash-table-ref/default
-                             (parser-infix-parse-fns parser)
-                             infix-type
-                             #f)))
-              (if infix-fn
-                  (begin
-                    (next-token! parser)
-                    (loop (infix-fn parser left)))
-                  left))
-            left)))))
+  (with-return
+    (let* ((type (token-type (parser-cur-token parser)))
+           (prefix-fn (hash-table-ref/default 
+                       (parser-prefix-parse-fns parser) 
+                       type 
+                       #f)))
+      (unless prefix-fn
+        (no-prefix-parse-fn-error! parser type)
+        (return #f))
+      
+      (let ((left-exp (prefix-fn parser)))
+        (let loop ((left left-exp))
+          (if (and (not (peek-token-is? parser SEMICOLON))
+                   (< precedence (peek-precedence parser)))
+              (let* ((infix-type (token-type (parser-peek-token parser)))
+                     (infix-fn (hash-table-ref/default
+                               (parser-infix-parse-fns parser)
+                               infix-type
+                               #f)))
+                (if infix-fn
+                    (begin
+                      (next-token! parser)
+                      (loop (infix-fn parser left)))
+                    left))
+              left))))))
 
 (define (parse-block-statement parser)
   "Parse block statement: { statements }"
@@ -313,93 +325,97 @@
 
 (define (parse-if-expression parser)
   "Parse if expression"
-  (let ((expr-token (parser-cur-token parser)))
-    (unless (expect-peek! parser LPAREN)
-      (return #f))
-    
-    (next-token! parser)
-    (let ((condition (parse-expression parser LOWEST)))
-      (unless (expect-peek! parser RPAREN)
+  (with-return
+    (let ((expr-token (parser-cur-token parser)))
+      (unless (expect-peek! parser LPAREN)
         (return #f))
       
-      (unless (expect-peek! parser LBRACE)
-        (return #f))
-      
-      (let ((consequence (parse-block-statement parser)))
-        (let ((alternative (if (peek-token-is? parser ELSE)
-                              (begin
-                                (next-token! parser)
-                                (unless (expect-peek! parser LBRACE)
-                                  (return #f))
-                                (parse-block-statement parser))
-                              #f)))
-          (make-if-expression expr-token condition consequence alternative))))))
+      (next-token! parser)
+      (let ((condition (parse-expression parser LOWEST)))
+        (unless (expect-peek! parser RPAREN)
+          (return #f))
+        
+        (unless (expect-peek! parser LBRACE)
+          (return #f))
+        
+        (let ((consequence (parse-block-statement parser)))
+          (let ((alternative (if (peek-token-is? parser ELSE)
+                                (begin
+                                  (next-token! parser)
+                                  (unless (expect-peek! parser LBRACE)
+                                    (return #f))
+                                  (parse-block-statement parser))
+                                #f)))
+            (make-if-expression expr-token condition consequence alternative)))))))
 
 (define (parse-while-expression parser)
   "Parse while expression"
-  (let ((expr-token (parser-cur-token parser)))
-    (unless (expect-peek! parser LPAREN)
-      (return #f))
-    
-    (next-token! parser)
-    (let ((condition (parse-expression parser LOWEST)))
-      (unless (expect-peek! parser RPAREN)
+  (with-return
+    (let ((expr-token (parser-cur-token parser)))
+      (unless (expect-peek! parser LPAREN)
         (return #f))
       
-      (unless (expect-peek! parser LBRACE)
-        (return #f))
-      
-      (let ((body (parse-block-statement parser)))
-        (make-while-expression expr-token condition body)))))
+      (next-token! parser)
+      (let ((condition (parse-expression parser LOWEST)))
+        (unless (expect-peek! parser RPAREN)
+          (return #f))
+        
+        (unless (expect-peek! parser LBRACE)
+          (return #f))
+        
+        (let ((body (parse-block-statement parser)))
+          (make-while-expression expr-token condition body))))))
 
 (define (parse-function-literal parser)
   "Parse function literal"
-  (let ((fn-token (parser-cur-token parser)))
-    (unless (expect-peek! parser LPAREN)
-      (return #f))
-    
-    (let ((parameters (parse-function-parameters parser)))
-      (unless (expect-peek! parser LBRACE)
+  (with-return
+    (let ((fn-token (parser-cur-token parser)))
+      (unless (expect-peek! parser LPAREN)
         (return #f))
       
-      (let ((body (parse-block-statement parser)))
-        (make-function-literal fn-token parameters body)))))
+      (let ((parameters (parse-function-parameters parser)))
+        (unless (expect-peek! parser LBRACE)
+          (return #f))
+        
+        (let ((body (parse-block-statement parser)))
+          (make-function-literal fn-token parameters body))))))
 
 (define (parse-function-parameters parser)
   "Parse function parameters"
-  (let loop ((params '()))
-    (cond
-     ((peek-token-is? parser RPAREN)
-      (next-token! parser)
-      (reverse params))
-     
-     ((null? params)
-      (next-token! parser)
-      (if (cur-token-is? parser RPAREN)
-          '()
-          (let ((param (make-identifier (parser-cur-token parser)
-                                        (token-literal (parser-cur-token parser)))))
-            (if (peek-token-is? parser COMMA)
-                (begin
-                  (next-token! parser)
-                  (loop (cons param params)))
-                (begin
-                  (unless (expect-peek! parser RPAREN)
-                    (return #f))
-                  (reverse (cons param params)))))))
-     
-     (else
-      (next-token! parser)
-      (let ((param (make-identifier (parser-cur-token parser)
-                                    (token-literal (parser-cur-token parser)))))
-        (if (peek-token-is? parser COMMA)
-            (begin
-              (next-token! parser)
-              (loop (cons param params)))
-            (begin
-              (unless (expect-peek! parser RPAREN)
-                (return #f))
-              (reverse (cons param params)))))))))
+  (with-return
+    (let loop ((params '()))
+      (cond
+       ((peek-token-is? parser RPAREN)
+        (next-token! parser)
+        (reverse params))
+       
+       ((null? params)
+        (next-token! parser)
+        (if (cur-token-is? parser RPAREN)
+            '()
+            (let ((param (make-identifier (parser-cur-token parser)
+                                          (token-literal (parser-cur-token parser)))))
+              (if (peek-token-is? parser COMMA)
+                  (begin
+                    (next-token! parser)
+                    (loop (cons param params)))
+                  (begin
+                    (unless (expect-peek! parser RPAREN)
+                      (return #f))
+                    (reverse (cons param params)))))))
+       
+       (else
+        (next-token! parser)
+        (let ((param (make-identifier (parser-cur-token parser)
+                                      (token-literal (parser-cur-token parser)))))
+          (if (peek-token-is? parser COMMA)
+              (begin
+                (next-token! parser)
+                (loop (cons param params)))
+              (begin
+                (unless (expect-peek! parser RPAREN)
+                  (return #f))
+                (reverse (cons param params))))))))))
 
 (define (parse-call-expression parser function)
   "Parse call expression"
@@ -415,88 +431,91 @@
 
 (define (parse-index-expression parser left)
   "Parse index expression"
-  (let ((expr-token (parser-cur-token parser)))
-    (next-token! parser)
-    (let ((index (parse-expression parser LOWEST)))
-      (unless (expect-peek! parser RBRACKET)
-        (return #f))
-      (make-index-expression expr-token left index))))
+  (with-return
+    (let ((expr-token (parser-cur-token parser)))
+      (next-token! parser)
+      (let ((index (parse-expression parser LOWEST)))
+        (unless (expect-peek! parser RBRACKET)
+          (return #f))
+        (make-index-expression expr-token left index)))))
 
 (define (parse-hash-literal parser)
   "Parse hash literal"
-  (let ((hash-token (parser-cur-token parser)))
-    (let loop ((pairs '()))
-      (cond
-       ((peek-token-is? parser RBRACE)
-        (next-token! parser)
-        (make-hash-literal hash-token (reverse pairs)))
-       
-       ((null? pairs)
-        (next-token! parser)
-        (if (cur-token-is? parser RBRACE)
-            (make-hash-literal hash-token '())
-            (let ((key (parse-expression parser LOWEST)))
-              (unless (expect-peek! parser COLON)
-                (return #f))
-              (next-token! parser)
-              (let ((value (parse-expression parser LOWEST)))
-                (if (peek-token-is? parser COMMA)
-                    (begin
-                      (next-token! parser)
-                      (loop (cons (cons key value) pairs)))
-                    (begin
-                      (unless (expect-peek! parser RBRACE)
-                        (return #f))
-                      (make-hash-literal hash-token 
-                                        (reverse (cons (cons key value) pairs)))))))))
-       
-       (else
-        (next-token! parser)
-        (let ((key (parse-expression parser LOWEST)))
-          (unless (expect-peek! parser COLON)
-            (return #f))
+  (with-return
+    (let ((hash-token (parser-cur-token parser)))
+      (let loop ((pairs '()))
+        (cond
+         ((peek-token-is? parser RBRACE)
           (next-token! parser)
-          (let ((value (parse-expression parser LOWEST)))
-            (if (peek-token-is? parser COMMA)
-                (begin
-                  (next-token! parser)
-                  (loop (cons (cons key value) pairs)))
-                (begin
-                  (unless (expect-peek! parser RBRACE)
-                    (return #f))
-                  (make-hash-literal hash-token 
-                                    (reverse (cons (cons key value) pairs))))))))))))
+          (make-hash-literal hash-token (reverse pairs)))
+         
+         ((null? pairs)
+          (next-token! parser)
+          (if (cur-token-is? parser RBRACE)
+              (make-hash-literal hash-token '())
+              (let ((key (parse-expression parser LOWEST)))
+                (unless (expect-peek! parser COLON)
+                  (return #f))
+                (next-token! parser)
+                (let ((value (parse-expression parser LOWEST)))
+                  (if (peek-token-is? parser COMMA)
+                      (begin
+                        (next-token! parser)
+                        (loop (cons (cons key value) pairs)))
+                      (begin
+                        (unless (expect-peek! parser RBRACE)
+                          (return #f))
+                        (make-hash-literal hash-token 
+                                          (reverse (cons (cons key value) pairs)))))))))
+         
+         (else
+          (next-token! parser)
+          (let ((key (parse-expression parser LOWEST)))
+            (unless (expect-peek! parser COLON)
+              (return #f))
+            (next-token! parser)
+            (let ((value (parse-expression parser LOWEST)))
+              (if (peek-token-is? parser COMMA)
+                  (begin
+                    (next-token! parser)
+                    (loop (cons (cons key value) pairs)))
+                  (begin
+                    (unless (expect-peek! parser RBRACE)
+                      (return #f))
+                    (make-hash-literal hash-token 
+                                      (reverse (cons (cons key value) pairs)))))))))))
 
 (define (parse-expression-list parser end-token)
   "Parse list of expressions until end-token"
-  (let loop ((expressions '()))
-    (cond
-     ((peek-token-is? parser end-token)
-      (next-token! parser)
-      (reverse expressions))
-     
-     ((null? expressions)
-      (next-token! parser)
-      (if (cur-token-is? parser end-token)
-          '()
-          (let ((expr (parse-expression parser LOWEST)))
-            (if (peek-token-is? parser COMMA)
-                (begin
-                  (next-token! parser)
-                  (loop (cons expr expressions)))
-                (begin
-                  (unless (expect-peek! parser end-token)
-                    (return #f))
-                  (reverse (cons expr expressions)))))))
-     
-     (else
-      (next-token! parser)
-      (let ((expr (parse-expression parser LOWEST)))
-        (if (peek-token-is? parser COMMA)
-            (begin
-              (next-token! parser)
-              (loop (cons expr expressions)))
-            (begin
-              (unless (expect-peek! parser end-token)
-                (return #f))
-              (reverse (cons expr expressions)))))))))
+  (with-return
+    (let loop ((expressions '()))
+      (cond
+       ((peek-token-is? parser end-token)
+        (next-token! parser)
+        (reverse expressions))
+       
+       ((null? expressions)
+        (next-token! parser)
+        (if (cur-token-is? parser end-token)
+            '()
+            (let ((expr (parse-expression parser LOWEST)))
+              (if (peek-token-is? parser COMMA)
+                  (begin
+                    (next-token! parser)
+                    (loop (cons expr expressions)))
+                  (begin
+                    (unless (expect-peek! parser end-token)
+                      (return #f))
+                    (reverse (cons expr expressions)))))))
+       
+       (else
+        (next-token! parser)
+        (let ((expr (parse-expression parser LOWEST)))
+          (if (peek-token-is? parser COMMA)
+              (begin
+                (next-token! parser)
+                (loop (cons expr expressions)))
+              (begin
+                (unless (expect-peek! parser end-token)
+                  (return #f))
+                (reverse (cons expr expressions))))))))))
