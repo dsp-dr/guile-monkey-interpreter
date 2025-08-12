@@ -25,6 +25,9 @@ test-results/
 build/
 dist/
 
-# Book PDF
+# Book and Resources
 *.pdf
 writing_an_interpreter_in_go_*
+resources/
+research/
+book-chunks/

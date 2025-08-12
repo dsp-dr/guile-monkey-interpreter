@@ -59,9 +59,9 @@
 (define NOT-EQ '!=)
 
 ;; Delimiters
-(define COMMA ',)
-(define SEMICOLON ';)
-(define COLON ':)
+(define COMMA 'COMMA)
+(define SEMICOLON 'SEMICOLON)
+(define COLON 'COLON)
 (define LPAREN 'LPAREN)
 (define RPAREN 'RPAREN)
 (define LBRACE 'LBRACE)

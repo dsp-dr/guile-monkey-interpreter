@@ -14,7 +14,7 @@ CODE_02_DIR = code/02
 SOURCES = $(shell find $(SRC_DIR) -name "*.scm" 2>/dev/null || echo "")
 TESTS = $(shell find $(TEST_DIR) -name "*-test.scm" 2>/dev/null || echo "")
 
-.PHONY: all test test-01 test-02 test-03 test-lexer test-parser test-evaluator repl-01 repl-02 repl-03 clean check compile help
+.PHONY: all test test-01 test-02 test-03 test-04 test-lexer test-parser test-evaluator repl repl-01 repl-02 repl-03 clean check compile help
 
 # Default target
 all: help
@@ -22,18 +22,22 @@ all: help
 help:
 	@echo "Guile Monkey Interpreter"
 	@echo ""
-	@echo "Testing targets:"
+	@echo "Main targets:"
+	@echo "  make repl        - Start the complete Monkey interpreter"
 	@echo "  make test        - Run all tests"
+	@echo ""
+	@echo "Testing targets:"
 	@echo "  make test-01     - Run Chapter 01 (lexer) tests"
 	@echo "  make test-02     - Run Chapter 02 (parser) tests"
 	@echo "  make test-03     - Run Chapter 03 (evaluator) tests"
+	@echo "  make test-04     - Run Chapter 04 (extended built-ins) tests"
 	@echo "  make test-lexer  - Run lexer tests from tests/ directory"
 	@echo "  make test-parser - Run parser tests from tests/ directory"
 	@echo ""
-	@echo "REPL targets:"
+	@echo "Chapter REPLs:"
 	@echo "  make repl-01     - Start Chapter 01 lexer REPL"
 	@echo "  make repl-02     - Start Chapter 02 parser REPL"
-	@echo "  make repl-03     - Start Chapter 03 evaluator REPL (full interpreter)"
+	@echo "  make repl-03     - Start Chapter 03 evaluator REPL"
 	@echo ""
 	@echo "Other targets:"
 	@echo "  make check       - Check syntax of all source files"
@@ -41,8 +45,13 @@ help:
 	@echo "  make clean       - Remove compiled files and artifacts"
 	@echo "  make help        - Show this help"
 
+# Main REPL - Complete interpreter
+repl:
+	@echo "Starting Complete Monkey Interpreter..."
+	@$(GUILE) $(GUILE_FLAGS) -L src src/monkey.scm
+
 # Run all tests
-test: test-01 test-02 test-03
+test: test-01 test-02 test-03 test-04
 	@echo ""
 	@echo "========================================="
 	@echo "All tests completed!"
@@ -97,6 +106,13 @@ test-03:
 repl-03:
 	@echo "Starting Chapter 03 - Full Monkey Interpreter..."
 	@cd code/03 && $(GUILE) $(GUILE_FLAGS) -L src src/monkey/main.scm
+
+# Chapter 04 - Extended built-ins tests
+test-04:
+	@echo ""
+	@echo "Running Chapter 04 - Extended Built-ins Tests..."
+	@echo "========================================="
+	@$(GUILE) $(GUILE_FLAGS) -L src src/test-chapter4.scm
 
 # Check syntax of source files
 check:
