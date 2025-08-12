@@ -4,7 +4,7 @@
 [![Tests](https://img.shields.io/badge/Tests-98.6%25-success.svg)](https://github.com/dsp-dr/guile-monkey-interpreter)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/Language-Scheme-red.svg)](https://www.scheme.org/)
-[![asciinema](https://img.shields.io/badge/Demo-asciinema-orange.svg)](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh)
+[![asciinema](https://img.shields.io/badge/Demo-asciinema-orange.svg)](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW)
 
 A Scheme implementation of the Monkey programming language interpreter from Thorsten Ball's ["Writing An Interpreter in Go"](https://interpreterbook.com/), written in GNU Guile Scheme.
 
@@ -14,7 +14,7 @@ This project implements a complete interpreter for the Monkey programming langua
 
 ## 🎬 Live Demo
 
-[![asciicast](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh.svg)](https://asciinema.org/a/RbGihOur5DpDFStKqR0OftVoh)
+[![asciicast](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW.svg)](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW)
 
 *Watch the interpreter in action, demonstrating arithmetic, functions, arrays, and Chapter 4 extensions*
 
