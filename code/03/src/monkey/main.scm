@@ -10,6 +10,7 @@
   #:use-module (monkey object environment)
   #:use-module (monkey evaluator evaluator)
   #:use-module (ice-9 readline)
+  #:use-module (ice-9 rdelim)
   #:use-module (ice-9 format)
   #:export (start-repl
             main))
