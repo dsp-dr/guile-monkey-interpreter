@@ -38,7 +38,7 @@
   (display MONKEY-FACE)
   (newline)
   (display "Welcome to the Monkey Programming Language!\n")
-  (display "Chapter 03: Complete Interpreter with Evaluation\n")
+  (display "Complete Interpreter with Chapters 1-4 Implemented\n")
   (display "Type Monkey code to evaluate (Ctrl-D to exit)\n\n")
   
   ;; Enable readline if available
