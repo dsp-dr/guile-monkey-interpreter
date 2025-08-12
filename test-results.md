@@ -121,13 +121,47 @@ Additional built-in functions implemented:
 - ✅ Hash literals (including empty hashes)
 - ✅ Complex programs (fibonacci, nested functions)
 
+### Evaluator Tests (Chapter 3)
+- ✅ Integer arithmetic operations
+- ✅ Boolean operations and truthiness
+- ✅ Conditional expressions (if/else)
+- ✅ Return statements
+- ✅ Let bindings and variable resolution
+- ✅ Function definitions
+- ✅ Function application
+- ✅ Closures and lexical scoping
+- ✅ Recursive functions
+- ✅ First-class functions
+- ✅ Array operations
+- ✅ Hash operations
+- ✅ Index expressions for arrays and hashes
+- ✅ Built-in functions (len, first, last, rest, push, puts)
+- ✅ Error handling and propagation
+
+### Extended Built-ins Tests (Chapter 4)
+- ✅ `type()` - Returns type of any object (INTEGER, STRING, BOOLEAN, etc.)
+- ✅ `str()` - Converts values to strings
+- ✅ `int()` - Parses strings to integers with error handling
+- ✅ `split()` - Splits strings by delimiter into arrays
+- ✅ `join()` - Joins array elements with delimiter
+- ✅ `contains()` - Checks if string contains substring or array contains element
+- ✅ `keys()` - Returns array of hash keys
+- ✅ `values()` - Returns array of hash values
+- ✅ `delete()` - Removes key from hash, returns new hash
+
 ## Test Categories Breakdown
 
 ### Working Perfectly ✅
 1. **Token Recognition**: All operators, keywords, delimiters
 2. **Parsing**: Complete AST generation for all language constructs
 3. **Precedence**: Correct operator precedence handling
-4. **Complex Programs**: Real-world Monkey code parsing
+4. **Evaluation**: Full tree-walking interpreter
+5. **Functions**: First-class functions with closures
+6. **Data Structures**: Arrays and hashes with indexing
+7. **Built-in Functions**: 15 built-ins (6 core + 9 extended)
+8. **Type System**: Dynamic typing with type checking
+9. **Error Handling**: Graceful error propagation
+10. **Complex Programs**: Fibonacci, higher-order functions, recursion
 
 ### Known Issues ⚠️
 1. **Lexer Identifier Parsing**:
