@@ -13,6 +13,11 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 format)
   #:export (start-repl
+            start-monkey-repl
+            run-file
+            monkey-eval
+            show-help
+            show-version
             main))
 
 (define PROMPT ">> ")
@@ -82,6 +87,48 @@
                     errors)
           *null*)
         (eval program env))))
+
+;; Alias for compatibility
+(define start-monkey-repl start-repl)
+
+(define (run-file filename)
+  "Execute a Monkey source file"
+  (if (file-exists? filename)
+      (let ((env (make-environment)))
+        (call-with-input-file filename
+          (lambda (port)
+            (let ((content (get-string-all port)))
+              (let ((result (eval-input content env)))
+                (unless (null-object? result)
+                  (display (object->string result))
+                  (newline)))))))
+      (begin
+        (format #t "Error: File not found: ~a~%" filename)
+        (exit 1))))
+
+(define (monkey-eval expr)
+  "Evaluate a Monkey expression from command line"
+  (let ((env (make-environment)))
+    (let ((result (eval-input expr env)))
+      (unless (null-object? result)
+        (display (object->string result))
+        (newline)))))
+
+(define (show-help)
+  "Display help message"
+  (display "Monkey Language Interpreter\n")
+  (display "Usage: monkey [OPTIONS] [FILE]\n\n")
+  (display "Options:\n")
+  (display "  -h, --help      Show this help message\n")
+  (display "  -v, --version   Show version information\n")
+  (display "  -e, --eval EXPR Evaluate expression\n")
+  (display "\nWithout arguments, starts the REPL\n"))
+
+(define (show-version)
+  "Display version information"
+  (display "Monkey Language Interpreter v1.0\n")
+  (display "Based on 'Writing An Interpreter In Go'\n")
+  (display "Implemented in GNU Guile Scheme\n"))
 
 (define (main args)
   "Main entry point"

@@ -3,10 +3,10 @@
 ;;; Monkey Language Interpreter
 ;;; Main entry point
 
-(add-to-load-path (string-append (dirname (current-filename)) "/src/monkey"))
+(add-to-load-path (string-append (dirname (current-filename)) "/src"))
 
 (use-modules (ice-9 getopt-long)
-             (main))
+             (monkey main))
 
 (define (main args)
   (let* ((option-spec '((help (single-char #\h) (value #f))

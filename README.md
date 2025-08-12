@@ -14,9 +14,11 @@ This project implements a complete interpreter for the Monkey programming langua
 
 ## 🎬 Live Demo
 
-[![asciicast](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW.svg)](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW)
+![Monkey Interpreter Demo](demo/monkey-demo.gif)
 
 *Watch the interpreter in action, demonstrating arithmetic, functions, arrays, and Chapter 4 extensions*
+
+[View on asciinema](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW) for full interactive playback.
 
 ### Features
 

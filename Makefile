@@ -14,7 +14,7 @@ CODE_02_DIR = code/02
 SOURCES = $(shell find $(SRC_DIR) -name "*.scm" 2>/dev/null || echo "")
 TESTS = $(shell find $(TEST_DIR) -name "*-test.scm" 2>/dev/null || echo "")
 
-.PHONY: all test test-01 test-02 test-03 test-04 test-lexer test-parser test-evaluator repl repl-01 repl-02 repl-03 clean check compile help
+.PHONY: all test test-01 test-02 test-03 test-04 test-lexer test-parser test-evaluator repl repl-01 repl-02 repl-03 clean check compile help demo
 
 # Default target
 all: help
@@ -25,6 +25,7 @@ help:
 	@echo "Main targets:"
 	@echo "  make repl        - Start the complete Monkey interpreter"
 	@echo "  make test        - Run all tests"
+	@echo "  make demo        - Generate demo GIF from asciinema cast"
 	@echo ""
 	@echo "Testing targets:"
 	@echo "  make test-01     - Run Chapter 01 (lexer) tests"
@@ -159,6 +160,15 @@ clean:
 	@find . -name "*.log" -delete
 	@rm -rf test-results/
 	@echo "Clean complete!"
+
+# Demo generation
+demo: demo/monkey-demo.gif
+
+demo/monkey-demo.gif: demo/monkey-demo.cast
+	@echo "Generating demo GIF from asciinema cast..."
+	@command -v agg >/dev/null 2>&1 || { echo "Error: agg not found. Install with: pkg install asciinema-agg"; exit 1; }
+	@agg $< $@
+	@echo "Demo GIF generated: $@"
 
 # Quick test runner for specific test files
 test-%:

@@ -483,7 +483,7 @@
                     (unless (expect-peek! parser RBRACE)
                       (return #f))
                     (make-hash-literal hash-token 
-                                      (reverse (cons (cons key value) pairs)))))))))))
+                                      (reverse (cons (cons key value) pairs)))))))))))))
 
 (define (parse-expression-list parser end-token)
   "Parse list of expressions until end-token"
