@@ -48,7 +48,7 @@ help:
 
 # Main REPL - Complete interpreter
 repl:
-	@echo "Starting Complete Monkey Interpreter..."
+	@echo "Starting Monkey Interpreter (Chapters 1-4)..."
 	@$(GUILE) $(GUILE_FLAGS) -L src src/monkey.scm
 
 # Run all tests
