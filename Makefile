@@ -14,7 +14,7 @@ CODE_02_DIR = code/02
 SOURCES = $(shell find $(SRC_DIR) -name "*.scm" 2>/dev/null || echo "")
 TESTS = $(shell find $(TEST_DIR) -name "*-test.scm" 2>/dev/null || echo "")
 
-.PHONY: all test test-01 test-02 test-03 test-04 test-lexer test-parser test-evaluator repl repl-01 repl-02 repl-03 clean check compile help demo
+.PHONY: all test test-01 test-02 test-03 test-04 test-lexer test-parser repl repl-01 repl-02 repl-03 repl-04 clean check compile help demo
 
 # Default target
 all: help
@@ -39,6 +39,7 @@ help:
 	@echo "  make repl-01     - Start Chapter 01 lexer REPL"
 	@echo "  make repl-02     - Start Chapter 02 parser REPL"
 	@echo "  make repl-03     - Start Chapter 03 evaluator REPL"
+	@echo "  make repl-04     - Start Chapter 04 extended REPL (same as 'make repl')"
 	@echo ""
 	@echo "Other targets:"
 	@echo "  make check       - Check syntax of all source files"
@@ -49,7 +50,7 @@ help:
 # Main REPL - Complete interpreter
 repl:
 	@echo "Starting Monkey Interpreter (Chapters 1-4)..."
-	@$(GUILE) $(GUILE_FLAGS) -L src src/monkey.scm
+	@$(GUILE) $(GUILE_FLAGS) -L src -c "(use-modules (monkey main)) (start-repl)"
 
 # Run all tests
 test: test-01 test-02 test-03 test-04
@@ -114,6 +115,9 @@ test-04:
 	@echo "Running Chapter 04 - Extended Built-ins Tests..."
 	@echo "========================================="
 	@$(GUILE) $(GUILE_FLAGS) -L src src/test-chapter4.scm
+
+# Chapter 04 REPL (same as main REPL)
+repl-04: repl
 
 # Check syntax of source files
 check:
