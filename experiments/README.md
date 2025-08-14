@@ -18,17 +18,18 @@ This directory contains proof-of-concept implementations and analysis for potent
 ## Experiments
 
 ### Language Features
-- `01-for-loops.monkey` - C-style for loops
-- `02-break-continue.monkey` - Loop control flow
-- `03-string-interpolation.monkey` - Template strings
-- `04-pattern-matching.monkey` - Scheme-like match expressions
-- `05-exception-handling.monkey` - Try/catch/finally blocks
-- `06-tail-call-optimization.monkey` - Recursive optimization
-- `07-anonymous-shorthand.monkey` - Lambda syntax sugar
+- `001-for-loops/` - C-style for loops
+- `002-break-continue/` - Loop control flow
+- `003-string-interpolation/` - Template strings
+- `004-pattern-matching/` - Scheme-like match expressions
+- `005-exception-handling/` - Try/catch/finally blocks
+- `006-tail-call-optimization/` - Recursive optimization
+- `007-anonymous-shorthand/` - Lambda syntax sugar
 
 ### Built-in Extensions
-- `08-array-operations.monkey` - Functional array methods
-- `09-module-system.monkey` - Import/export system
+- `008-array-operations/` - Functional array methods
+- `009-module-system/` - Import/export system
+- `010-ffi-extensions/` - FFI-based filesystem and HTTP operations
 
 ## Implementation Roadmap
 
@@ -64,10 +65,16 @@ Building a complete development ecosystem:
 
 ## Running Experiments
 
-Each experiment file can be run with the current interpreter to see what's possible with existing features:
+Each experiment directory contains example code that can be run with the current interpreter:
 
 ```bash
-./monkey experiments/01-for-loops.monkey
+./monkey experiments/001-for-loops/for-loops.monkey
+./monkey experiments/008-array-operations/array-operations.monkey
+
+# FFI extensions require building first:
+cd experiments/010-ffi-extensions
+gmake all
+guile test-ffi.scm
 ```
 
 The experiments demonstrate:

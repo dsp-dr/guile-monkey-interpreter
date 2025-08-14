@@ -45,6 +45,8 @@ help:
 	@echo "  make check       - Check syntax of all source files"
 	@echo "  make compile     - Compile all modules"
 	@echo "  make clean       - Remove compiled files and artifacts"
+	@echo "  make ffi-build   - Build FFI extensions (filesystem/HTTP)"
+	@echo "  make ffi-test    - Test FFI extensions"
 	@echo "  make help        - Show this help"
 
 # Main REPL - Complete interpreter
@@ -173,6 +175,17 @@ demo/monkey-demo.gif: demo/monkey-demo.cast
 	@command -v agg >/dev/null 2>&1 || { echo "Error: agg not found. Install with: pkg install asciinema-agg"; exit 1; }
 	@agg $< $@
 	@echo "Demo GIF generated: $@"
+
+# FFI Extensions
+ffi-build:
+	@echo "Building FFI extensions..."
+	@cd experiments/010-ffi-extensions && $(MAKE) clean && $(MAKE) all
+	@echo "FFI extensions built successfully!"
+
+ffi-test: ffi-build
+	@echo "Testing FFI extensions..."
+	@cd experiments/010-ffi-extensions && $(GUILE) test-ffi.scm
+	@echo "FFI tests complete!"
 
 # Quick test runner for specific test files
 test-%:
