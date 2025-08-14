@@ -13,6 +13,9 @@
             new-error
             native-bool-to-boolean))
 
+;; Import needed symbols from object module
+(define truthy? is-truthy?)
+
 ;;; ============================================================================
 ;;; Main Evaluation Function
 ;;; ============================================================================
@@ -401,6 +404,17 @@
     ("keys" (make-builtin-object builtin-keys))
     ("values" (make-builtin-object builtin-values))
     ("delete" (make-builtin-object builtin-delete))
+    ;; Quick Win Extensions
+    ("map" (make-builtin-object builtin-map))
+    ("filter" (make-builtin-object builtin-filter))
+    ("reduce" (make-builtin-object builtin-reduce))
+    ("sort" (make-builtin-object builtin-sort))
+    ("abs" (make-builtin-object builtin-abs))
+    ("min" (make-builtin-object builtin-min))
+    ("max" (make-builtin-object builtin-max))
+    ("trim" (make-builtin-object builtin-trim))
+    ("replace" (make-builtin-object builtin-replace))
+    ("substring" (make-builtin-object builtin-substring))
     (_ #f)))
 
 (define (builtin-len args)
@@ -605,6 +619,218 @@
               (make-hash-object new-pairs))
             (new-error "first argument to 'delete' must be HASH, got ~a"
                        (object-type hash-obj))))))
+
+;;; ============================================================================
+;;; Quick Win Extensions - Array Operations
+;;; ============================================================================
+
+(define (builtin-map args)
+  "Map function over array elements"
+  (if (not (= (length args) 2))
+      (new-error "wrong number of arguments. got=~a, want=2" (length args))
+      (let ((arr (car args))
+            (fn (cadr args)))
+        (cond
+         ((not (array-object? arr))
+          (new-error "first argument to 'map' must be ARRAY, got ~a" 
+                     (object-type arr)))
+         ((not (function-object? fn))
+          (new-error "second argument to 'map' must be FUNCTION, got ~a"
+                     (object-type fn)))
+         (else
+          (let* ((elements (array-object-elements arr))
+                 (fn-obj (if (builtin-object? fn)
+                            fn
+                            fn))
+                 (new-elements 
+                  (map (lambda (elem)
+                         (apply-function fn-obj (list elem)))
+                       elements)))
+            (if (any error-object? new-elements)
+                (find error-object? new-elements)
+                (make-array-object new-elements))))))))
+
+(define (builtin-filter args)
+  "Filter array elements by predicate"
+  (if (not (= (length args) 2))
+      (new-error "wrong number of arguments. got=~a, want=2" (length args))
+      (let ((arr (car args))
+            (fn (cadr args)))
+        (cond
+         ((not (array-object? arr))
+          (new-error "first argument to 'filter' must be ARRAY, got ~a"
+                     (object-type arr)))
+         ((not (function-object? fn))
+          (new-error "second argument to 'filter' must be FUNCTION, got ~a"
+                     (object-type fn)))
+         (else
+          (let* ((elements (array-object-elements arr))
+                 (filtered 
+                  (filter (lambda (elem)
+                            (let ((result (apply-function fn (list elem))))
+                              (if (error-object? result)
+                                  #f
+                                  (truthy? result))))
+                          elements)))
+            (make-array-object filtered)))))))
+
+(define (builtin-reduce args)
+  "Reduce array to single value"
+  (if (not (= (length args) 3))
+      (new-error "wrong number of arguments. got=~a, want=3" (length args))
+      (let ((arr (car args))
+            (fn (cadr args))
+            (init (caddr args)))
+        (cond
+         ((not (array-object? arr))
+          (new-error "first argument to 'reduce' must be ARRAY, got ~a"
+                     (object-type arr)))
+         ((not (function-object? fn))
+          (new-error "second argument to 'reduce' must be FUNCTION, got ~a"
+                     (object-type fn)))
+         (else
+          (let ((elements (array-object-elements arr)))
+            (fold (lambda (elem acc)
+                    (if (error-object? acc)
+                        acc
+                        (apply-function fn (list acc elem))))
+                  init
+                  elements)))))))
+
+(define (builtin-sort args)
+  "Sort array elements"
+  (if (or (< (length args) 1) (> (length args) 2))
+      (new-error "wrong number of arguments. got=~a, want=1 or 2" (length args))
+      (let ((arr (car args))
+            (cmp-fn (if (= (length args) 2) (cadr args) #f)))
+        (cond
+         ((not (array-object? arr))
+          (new-error "first argument to 'sort' must be ARRAY, got ~a"
+                     (object-type arr)))
+         ((and cmp-fn (not (function-object? cmp-fn)))
+          (new-error "second argument to 'sort' must be FUNCTION, got ~a"
+                     (object-type cmp-fn)))
+         (else
+          (let* ((elements (array-object-elements arr))
+                 (sorted 
+                  (if cmp-fn
+                      ;; Custom comparator
+                      (sort elements
+                            (lambda (a b)
+                              (let ((result (apply-function cmp-fn (list a b))))
+                                (if (error-object? result)
+                                    #f
+                                    (truthy? result)))))
+                      ;; Default sort
+                      (sort elements
+                            (lambda (a b)
+                              (cond
+                               ((and (integer-object? a) (integer-object? b))
+                                (< (integer-object-value a) (integer-object-value b)))
+                               ((and (string-object? a) (string-object? b))
+                                (string<? (string-object-value a) (string-object-value b)))
+                               (else #f)))))))
+            (make-array-object sorted)))))))
+
+;;; ============================================================================
+;;; Quick Win Extensions - String Functions
+;;; ============================================================================
+
+(define (builtin-trim args)
+  "Trim whitespace from string"
+  (if (not (= (length args) 1))
+      (new-error "wrong number of arguments. got=~a, want=1" (length args))
+      (let ((arg (car args)))
+        (if (string-object? arg)
+            (make-string-object (string-trim-both (string-object-value arg)))
+            (new-error "argument to 'trim' must be STRING, got ~a"
+                       (object-type arg))))))
+
+(define (builtin-replace args)
+  "Replace substring in string"
+  (if (not (= (length args) 3))
+      (new-error "wrong number of arguments. got=~a, want=3" (length args))
+      (let ((str-obj (car args))
+            (old-obj (cadr args))
+            (new-obj (caddr args)))
+        (if (and (string-object? str-obj)
+                 (string-object? old-obj)
+                 (string-object? new-obj))
+            (let* ((str (string-object-value str-obj))
+                   (old (string-object-value old-obj))
+                   (new (string-object-value new-obj))
+                   ;; Simple replace - replace all occurrences
+                   (result (let loop ((s str))
+                            (let ((pos (string-contains s old)))
+                              (if pos
+                                  (loop (string-append 
+                                         (substring s 0 pos)
+                                         new
+                                         (substring s (+ pos (string-length old)))))
+                                  s)))))
+              (make-string-object result))
+            (new-error "all arguments to 'replace' must be STRING")))))
+
+(define (builtin-substring args)
+  "Get substring from string"
+  (if (not (= (length args) 3))
+      (new-error "wrong number of arguments. got=~a, want=3" (length args))
+      (let ((str-obj (car args))
+            (start-obj (cadr args))
+            (end-obj (caddr args)))
+        (cond
+         ((not (string-object? str-obj))
+          (new-error "first argument to 'substring' must be STRING, got ~a"
+                     (object-type str-obj)))
+         ((not (integer-object? start-obj))
+          (new-error "second argument to 'substring' must be INTEGER, got ~a"
+                     (object-type start-obj)))
+         ((not (integer-object? end-obj))
+          (new-error "third argument to 'substring' must be INTEGER, got ~a"
+                     (object-type end-obj)))
+         (else
+          (let* ((str (string-object-value str-obj))
+                 (start (integer-object-value start-obj))
+                 (end (integer-object-value end-obj))
+                 (len (string-length str)))
+            (if (or (< start 0) (> end len) (> start end))
+                (new-error "invalid substring range: [~a, ~a] for string of length ~a"
+                           start end len)
+                (make-string-object (substring str start end)))))))))
+
+;;; ============================================================================
+;;; Quick Win Extensions - Math Functions
+;;; ============================================================================
+
+(define (builtin-abs args)
+  "Absolute value"
+  (if (not (= (length args) 1))
+      (new-error "wrong number of arguments. got=~a, want=1" (length args))
+      (let ((arg (car args)))
+        (if (integer-object? arg)
+            (make-integer-object (abs (integer-object-value arg)))
+            (new-error "argument to 'abs' must be INTEGER, got ~a"
+                       (object-type arg))))))
+
+(define (builtin-min args)
+  "Minimum value"
+  (if (< (length args) 1)
+      (new-error "wrong number of arguments. got=0, want=1+")
+      (let ((nums (filter integer-object? args)))
+        (if (not (= (length nums) (length args)))
+            (new-error "all arguments to 'min' must be INTEGER")
+            (make-integer-object 
+             (apply min (map integer-object-value nums)))))))
+
+(define (builtin-max args)
+  "Maximum value"
+  (if (< (length args) 1)
+      (new-error "wrong number of arguments. got=0, want=1+")
+      (let ((nums (filter integer-object? args)))
+        (if (not (= (length nums) (length args)))
+            (new-error "all arguments to 'max' must be INTEGER")
+            (make-integer-object 
+             (apply max (map integer-object-value nums)))))))
 
 ;;; ============================================================================
 ;;; Helper Functions
