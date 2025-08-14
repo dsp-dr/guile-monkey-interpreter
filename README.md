@@ -41,6 +41,17 @@ This project implements a complete interpreter for the Monkey programming langua
   - `keys()` - Get hash keys
   - `values()` - Get hash values
   - `delete()` - Delete from hash
+- 🆕 **Quick Win Extensions**: Additional built-in functions
+  - `map()` - Transform array elements
+  - `filter()` - Filter array by predicate
+  - `reduce()` - Fold array to single value
+  - `sort()` - Sort array elements
+  - `abs()` - Absolute value
+  - `min()` - Minimum value
+  - `max()` - Maximum value
+  - `trim()` - Trim whitespace from strings
+  - `replace()` - Replace substring
+  - `substring()` - Extract substring
 
 ## Project Structure
 
@@ -61,6 +72,8 @@ guile-monkey-interpreter/
 │   └── repl/              # Interactive REPL
 ├── docs/                   # Documentation
 ├── examples/              # Example Monkey programs
+├── experiments/           # Language extension experiments & analysis
+├── demo/                  # Demo recordings and scripts
 ├── scripts/               # Utility scripts
 └── tests/                 # Test suite
 ```
