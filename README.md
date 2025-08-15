@@ -57,45 +57,22 @@ This project implements a complete interpreter for the Monkey programming langua
 
 ```
 guile-monkey-interpreter/
-├── src/                     # Source code only
-│   └── monkey/             # Core interpreter implementation
-│       ├── token/         # Token definitions
-│       ├── lexer/         # Lexical analyzer
-│       ├── ast/           # Abstract Syntax Tree
-│       ├── parser/        # Modular Pratt parser
-│       ├── object/        # Runtime objects
-│       ├── evaluator/     # Tree-walking evaluator
-│       └── repl/          # Interactive REPL
-├── code/                    # Chapter-by-chapter implementation
-│   ├── 01/                 # Chapter 1: Lexing
-│   ├── 02/                 # Chapter 2: Parsing
-│   ├── 03/                 # Chapter 3: Evaluation
-│   └── 04/                 # Chapter 4: Extensions
-├── tutorials/              # 📚 Learning materials
-│   ├── 01-getting-started/   # Installation and basics
-│   ├── 02-language-features/ # Language guide
-│   ├── 03-extending-monkey/  # Adding features
-│   ├── 04-debugging/         # Debugging techniques
-│   └── 05-advanced-topics/   # Deep dives
-├── tests/                  # Test suite
-│   ├── integration/        # Integration tests
-│   ├── lexer-test.scm     # Lexer unit tests
-│   └── parser-test.scm    # Parser unit tests
-├── docs/                   # Documentation
-│   ├── reports/            # Status and analysis reports
-│   └── *.md                # Technical docs
-├── scripts/                # Utility scripts
-│   ├── debug/              # Debugging tools
-│   ├── gdb-guile.sh        # GDB integration
-│   └── tmux-guile.sh       # tmux session manager
-├── experiments/            # Language feature experiments
-│   ├── 001-010            # Language features
-│   └── 100-103            # Debugging tools
+├── src/monkey/             # Core interpreter source code
+├── code/                   # Book chapter implementations (01-04)
+├── tutorials/              # Learning materials and guides
+├── experiments/            # Feature experiments (00X) & tools (10X)
+├── tests/                  # Test suite with integration tests
 ├── examples/               # Example Monkey programs
-├── demo/                   # Demo recordings
-├── resources/              # External resources
-└── logs/                   # Test and debug logs (gitignored)
+├── scripts/                # Utility scripts and debugging tools
+├── docs/                   # Technical documentation and reports
+└── demo/                   # Demo recordings and materials
 ```
+
+**Key directories:**
+- `src/monkey/` - The complete interpreter implementation
+- `tutorials/` - Start here if you're new to the project
+- `experiments/` - Explore language extensions and debugging tools
+- `examples/` - See Monkey in action with sample programs
 
 ## Quick Start
 
@@ -323,13 +300,13 @@ Tests use SRFI-64:
 
 ## Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome! This is an educational project focused on learning.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Code organization and style
+- Testing requirements  
+- Documentation standards
+- Submitting pull requests
 
 ## Resources
 
@@ -343,6 +320,15 @@ Contributions are welcome! Please:
 - [Writing An Interpreter in Go](https://interpreterbook.com/) - The original book
 - [Guile Reference Manual](https://www.gnu.org/software/guile/manual/)
 - [SRFI Documents](https://srfi.schemers.org/) - Scheme standards
+
+## Security
+
+⚠️ **Educational Project - Not for Production Use**
+
+This interpreter is for learning purposes only. See [SECURITY.md](SECURITY.md) for important warnings about:
+- Not running untrusted code
+- No sandboxing or security boundaries
+- Educational vs. production use
 
 ## License
 

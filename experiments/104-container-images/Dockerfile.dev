@@ -1,0 +1,26 @@
+FROM debian:bookworm
+
+# Install required packages for Monkey interpreter development
+RUN apt-get update && apt-get install -y \
+    guile-3.0 \
+    guile-3.0-dev \
+    gcc \
+    g++ \
+    gdb \
+    make \
+    pkg-config \
+    git \
+    tmux \
+    vim \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up environment
+ENV GUILE_AUTO_COMPILE=0
+ENV GUILE_LOAD_PATH=/workspace/src
+
+# Set up working directory
+WORKDIR /workspace
+
+# Default command
+CMD ["/bin/bash"]

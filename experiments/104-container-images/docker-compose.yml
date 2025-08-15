@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Development environment with all tools
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    environment:
+      - GUILE_AUTO_COMPILE=0
+      - GUILE_LOAD_PATH=/workspace/src
+
+  # Run tests in container
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace
+    command: |
+      bash -c "
+        echo '=== Running Monkey Interpreter Tests ==='
+        echo
+        echo 'Testing Lexer...'
+        cd code/01 && ./run-tests.scm
+        echo
+        echo 'Testing Parser...'
+        cd ../02 && ./run-tests.scm
+        echo
+        echo 'Testing Evaluator...'
+        cd ../03 && ./run-tests.scm
+        echo
+        echo '=== All Tests Complete ==='
+      "
+
+  # Run REPL in container
+  repl:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    command: guile -L src src/monkey/main.scm
+
+  # Quick sanity check
+  sanity:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace
+    command: |
+      bash -c "
+        echo '=== Monkey Interpreter Sanity Check ==='
+        echo
+        echo 'Testing basic arithmetic...'
+        echo 'let x = 5; let y = 10; x + y;' | guile -L src src/monkey/main.scm | grep -q '15' && echo '✓ Arithmetic works' || echo '✗ Arithmetic failed'
+        echo
+        echo 'Testing functions...'
+        echo 'let add = fn(a, b) { a + b }; add(3, 4);' | guile -L src src/monkey/main.scm | grep -q '7' && echo '✓ Functions work' || echo '✗ Functions failed'
+        echo
+        echo 'Testing arrays...'
+        echo '[1, 2, 3];' | guile -L src src/monkey/main.scm | grep -q '\\[1, 2, 3\\]' && echo '✓ Arrays work' || echo '✗ Arrays failed'
+        echo
+        echo '=== Sanity Check Complete ==='
+      "
