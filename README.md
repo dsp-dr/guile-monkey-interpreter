@@ -57,31 +57,42 @@ This project implements a complete interpreter for the Monkey programming langua
 
 ```
 guile-monkey-interpreter/
+├── src/                     # Source code only
+│   ├── monkey/             # Core interpreter implementation
+│   │   ├── token/         # Token definitions
+│   │   ├── lexer/         # Lexical analyzer
+│   │   ├── ast/           # Abstract Syntax Tree
+│   │   ├── parser/        # Modular Pratt parser
+│   │   ├── object/        # Runtime objects
+│   │   ├── evaluator/     # Tree-walking evaluator
+│   │   └── repl/          # Interactive REPL
+│   └── experiments/        # Language experiments
 ├── code/                    # Chapter-by-chapter implementation
 │   ├── 01/                 # Chapter 1: Lexing
 │   ├── 02/                 # Chapter 2: Parsing
 │   ├── 03/                 # Chapter 3: Evaluation
-│   └── 04/                 # Chapter 4: Extending the Interpreter
-├── src/monkey/             # Current/complete implementation
-│   ├── token/             # Token definitions
-│   ├── lexer/             # Lexical analyzer
-│   ├── ast/               # Abstract Syntax Tree
-│   ├── parser/            # Modular Pratt parser
-│   ├── object/            # Runtime objects
-│   ├── evaluator/         # Tree-walking evaluator
-│   └── repl/              # Interactive REPL
-├── tutorials/             # 📚 Comprehensive learning materials
-│   ├── 01-getting-started/   # Installation and first steps
-│   ├── 02-language-features/ # Monkey language guide
+│   └── 04/                 # Chapter 4: Extensions
+├── tutorials/              # 📚 Learning materials
+│   ├── 01-getting-started/   # Installation and basics
+│   ├── 02-language-features/ # Language guide
 │   ├── 03-extending-monkey/  # Adding features
 │   ├── 04-debugging/         # Debugging techniques
 │   └── 05-advanced-topics/   # Deep dives
-├── docs/                   # Technical documentation
-├── examples/              # Example Monkey programs
-├── experiments/           # Language extension experiments
-├── demo/                  # Demo recordings and scripts
-├── scripts/               # Utility scripts and tools
-└── tests/                 # Test suite
+├── tests/                  # Test suite
+│   ├── integration/        # Integration tests
+│   ├── lexer-test.scm     # Lexer unit tests
+│   └── parser-test.scm    # Parser unit tests
+├── docs/                   # Documentation
+│   ├── reports/            # Status and analysis reports
+│   └── *.md                # Technical docs
+├── scripts/                # Utility scripts
+│   ├── debug/              # Debugging tools
+│   ├── gdb-guile.sh        # GDB integration
+│   └── tmux-guile.sh       # tmux session manager
+├── examples/               # Example Monkey programs
+├── demo/                   # Demo recordings
+├── resources/              # External resources
+└── logs/                   # Test and debug logs (gitignored)
 ```
 
 ## Quick Start
