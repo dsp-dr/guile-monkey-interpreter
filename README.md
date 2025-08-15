@@ -58,15 +58,14 @@ This project implements a complete interpreter for the Monkey programming langua
 ```
 guile-monkey-interpreter/
 ├── src/                     # Source code only
-│   ├── monkey/             # Core interpreter implementation
-│   │   ├── token/         # Token definitions
-│   │   ├── lexer/         # Lexical analyzer
-│   │   ├── ast/           # Abstract Syntax Tree
-│   │   ├── parser/        # Modular Pratt parser
-│   │   ├── object/        # Runtime objects
-│   │   ├── evaluator/     # Tree-walking evaluator
-│   │   └── repl/          # Interactive REPL
-│   └── experiments/        # Language experiments
+│   └── monkey/             # Core interpreter implementation
+│       ├── token/         # Token definitions
+│       ├── lexer/         # Lexical analyzer
+│       ├── ast/           # Abstract Syntax Tree
+│       ├── parser/        # Modular Pratt parser
+│       ├── object/        # Runtime objects
+│       ├── evaluator/     # Tree-walking evaluator
+│       └── repl/          # Interactive REPL
 ├── code/                    # Chapter-by-chapter implementation
 │   ├── 01/                 # Chapter 1: Lexing
 │   ├── 02/                 # Chapter 2: Parsing
@@ -89,6 +88,9 @@ guile-monkey-interpreter/
 │   ├── debug/              # Debugging tools
 │   ├── gdb-guile.sh        # GDB integration
 │   └── tmux-guile.sh       # tmux session manager
+├── experiments/            # Language feature experiments
+│   ├── 001-010            # Language features
+│   └── 100-103            # Debugging tools
 ├── examples/               # Example Monkey programs
 ├── demo/                   # Demo recordings
 ├── resources/              # External resources

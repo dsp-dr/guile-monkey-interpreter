@@ -7,18 +7,25 @@ This document explains the organization of the Monkey Interpreter project.
 ```
 .
 ├── src/                     # SOURCE CODE ONLY
-│   ├── monkey/             # Core interpreter implementation
-│   │   ├── token/          # Token type definitions
-│   │   ├── lexer/          # Tokenization/lexical analysis
-│   │   ├── ast/            # Abstract syntax tree nodes
-│   │   ├── parser/         # Modular Pratt parser implementation
-│   │   ├── object/         # Runtime object system
-│   │   ├── evaluator/      # Tree-walking evaluator
-│   │   └── repl/           # Read-Eval-Print-Loop
-│   └── experiments/        # Language feature experiments
-│       ├── 001-for-loops/
-│       ├── 002-break-continue/
-│       └── 103-mermaid-visualizer/
+│   └── monkey/             # Core interpreter implementation
+│       ├── token/          # Token type definitions
+│       ├── lexer/          # Tokenization/lexical analysis
+│       ├── ast/            # Abstract syntax tree nodes
+│       ├── parser/         # Modular Pratt parser implementation
+│       ├── object/         # Runtime object system
+│       ├── evaluator/      # Tree-walking evaluator
+│       └── repl/           # Read-Eval-Print-Loop
+│
+├── experiments/            # LANGUAGE EXPERIMENTS & TOOLS
+│   ├── 001-for-loops/      # Language feature: for loops
+│   ├── 002-break-continue/ # Language feature: break/continue
+│   ├── 003-string-interpolation/
+│   ├── ...
+│   ├── 010-ffi-extensions/ # FFI integration
+│   ├── 100-continuation-interference/ # Debugging tool
+│   ├── 101-for-loop-debugging/
+│   ├── 102-lsp-tree-il-tooling/
+│   └── 103-mermaid-visualizer/ # Visualization tools
 │
 ├── tests/                   # ALL TEST FILES
 │   ├── integration/        # Integration and feature tests
@@ -120,7 +127,8 @@ When adding new files:
 | File Type | Location |
 |-----------|----------|
 | Scheme source code | `src/monkey/` |
-| Experiments | `src/experiments/XXX-name/` |
+| Language experiments | `experiments/00X-feature/` |
+| Debug/tool experiments | `experiments/10X-tool/` |
 | Unit tests | `tests/` |
 | Integration tests | `tests/integration/` |
 | Monkey examples | `examples/` |
@@ -150,8 +158,8 @@ scripts/debug/balance-parens.scm file.scm
 
 ### Visualization
 ```bash
-# Paths updated but functionality unchanged
-src/experiments/103-mermaid-visualizer/generate-ast-diagram.scm "let x = 5;"
+# Paths updated to main experiments directory
+experiments/103-mermaid-visualizer/generate-ast-diagram.scm "let x = 5;"
 ```
 
 ## Benefits of This Structure
@@ -161,6 +169,7 @@ src/experiments/103-mermaid-visualizer/generate-ast-diagram.scm "let x = 5;"
 3. **Scalability**: Structure supports growth
 4. **Professional**: Industry-standard organization
 5. **Clean**: Minimal clutter in any directory
+6. **Experiments**: All experiments in main `experiments/` dir, not under `src/`
 
 ## Migration Notes
 

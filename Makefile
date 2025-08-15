@@ -228,16 +228,16 @@ visualize:
 	@echo "Mermaid Visualization Tools"
 	@echo "============================="
 	@echo "Generate AST diagram:"
-	@echo "  src/experiments/103-mermaid-visualizer/generate-ast-diagram.scm \"let x = 5;\""
+	@echo "  ./experiments/103-mermaid-visualizer/generate-ast-diagram.scm \"let x = 5;\""
 	@echo ""
 	@echo "Generate module graph:"
-	@echo "  cd src && experiments/103-mermaid-visualizer/generate-module-graph.scm"
+	@echo "  cd src && ../experiments/103-mermaid-visualizer/generate-module-graph.scm"
 	@echo ""
 	@echo "Generate control flow:"
-	@echo "  src/experiments/103-mermaid-visualizer/generate-control-flow.scm"
+	@echo "  ./experiments/103-mermaid-visualizer/generate-control-flow.scm"
 	@echo ""
 	@echo "Generate sequence diagram:"
-	@echo "  src/experiments/103-mermaid-visualizer/generate-sequence-diagram.scm"
+	@echo "  ./experiments/103-mermaid-visualizer/generate-sequence-diagram.scm"
 
 # Documentation targets
 tutorial:
