@@ -66,15 +66,21 @@ guile-monkey-interpreter/
 │   ├── token/             # Token definitions
 │   ├── lexer/             # Lexical analyzer
 │   ├── ast/               # Abstract Syntax Tree
-│   ├── parser/            # Pratt parser
+│   ├── parser/            # Modular Pratt parser
 │   ├── object/            # Runtime objects
 │   ├── evaluator/         # Tree-walking evaluator
 │   └── repl/              # Interactive REPL
-├── docs/                   # Documentation
+├── tutorials/             # 📚 Comprehensive learning materials
+│   ├── 01-getting-started/   # Installation and first steps
+│   ├── 02-language-features/ # Monkey language guide
+│   ├── 03-extending-monkey/  # Adding features
+│   ├── 04-debugging/         # Debugging techniques
+│   └── 05-advanced-topics/   # Deep dives
+├── docs/                   # Technical documentation
 ├── examples/              # Example Monkey programs
-├── experiments/           # Language extension experiments & analysis
+├── experiments/           # Language extension experiments
 ├── demo/                  # Demo recordings and scripts
-├── scripts/               # Utility scripts
+├── scripts/               # Utility scripts and tools
 └── tests/                 # Test suite
 ```
 
@@ -82,8 +88,9 @@ guile-monkey-interpreter/
 
 ### Prerequisites
 
-- Guile 3.0 or later
-- GNU Make (optional)
+- GNU Guile 3.0 or later
+- GNU Make (optional, use `gmake` on BSD systems)
+- Git for cloning the repository
 
 ### Installation
 
@@ -93,7 +100,7 @@ git clone https://github.com/dsp-dr/guile-monkey-interpreter.git
 cd guile-monkey-interpreter
 
 # Run the complete interpreter
-gmake repl
+gmake repl  # Use 'make' on Linux
 
 # Or run directly
 guile -L src src/monkey/main.scm
@@ -101,6 +108,8 @@ guile -L src src/monkey/main.scm
 # Run tests
 gmake test
 ```
+
+📚 **For detailed setup instructions, see the [Installation Guide](tutorials/01-getting-started/01-installation.md)**
 
 ### Running Tests
 
@@ -204,6 +213,24 @@ len("hello");       // 5
 puts("Hello, World!"); // Prints to stdout
 ```
 
+## Learning Resources
+
+### 📚 Tutorials
+
+Comprehensive tutorials are available in the [`tutorials/`](tutorials/) directory:
+
+- **[Getting Started](tutorials/01-getting-started/)** - Installation, first program, REPL usage
+- **[Language Features](tutorials/02-language-features/)** - Complete Monkey language guide
+- **[Extending Monkey](tutorials/03-extending-monkey/)** - Add new features and built-ins
+- **[Debugging Guide](tutorials/04-debugging/)** - Tools and techniques for debugging
+- **[Advanced Topics](tutorials/05-advanced-topics/)** - Architecture and internals
+
+### 🛠️ Debugging Tools
+
+- **Interactive tmux session**: `./scripts/tmux-guile.sh` - Pre-configured debugging environment
+- **GDB integration**: `./scripts/gdb-guile.sh` - Low-level debugging support
+- **Visualization tools**: Generate Mermaid diagrams for AST, control flow, and module dependencies
+
 ## Development Guide
 
 ### Chapter Progression
@@ -293,6 +320,13 @@ Contributions are welcome! Please:
 
 ## Resources
 
+### Documentation
+- [📚 Tutorials](tutorials/) - Step-by-step learning guides
+- [📖 Technical Docs](docs/) - Implementation details
+- [🔬 Experiments](experiments/) - Language extensions and analysis
+- [💡 Examples](examples/) - Sample Monkey programs
+
+### External Resources
 - [Writing An Interpreter in Go](https://interpreterbook.com/) - The original book
 - [Guile Reference Manual](https://www.gnu.org/software/guile/manual/)
 - [SRFI Documents](https://srfi.schemers.org/) - Scheme standards
