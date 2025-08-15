@@ -8,6 +8,8 @@
 
 A Scheme implementation of the Monkey programming language interpreter from Thorsten Ball's ["Writing An Interpreter in Go"](https://interpreterbook.com/), written in GNU Guile Scheme.
 
+<img src="assets/images/book-cover-thumb-small.png" alt="Writing An Interpreter in Go" align="right" width="100">
+
 ## Overview
 
 This project implements a complete interpreter for the Monkey programming language, following the book's structure but adapted for Scheme idioms and extended with additional features.
