@@ -6,7 +6,9 @@
 [![Language](https://img.shields.io/badge/Language-Scheme-red.svg)](https://www.scheme.org/)
 [![asciinema](https://img.shields.io/badge/Demo-asciinema-orange.svg)](https://asciinema.org/a/5dA4ntDtB4PN1WpU4FZBgfWwW)
 
-<img src="assets/images/book-cover-thumb-small.png" alt="Writing An Interpreter in Go" align="right" width="80">
+<a href="https://interpreterbook.com/" target="_blank">
+  <img src="assets/images/book-cover-thumb-small.png" alt="Writing An Interpreter in Go" align="right" width="80">
+</a>
 
 A Scheme implementation of the Monkey programming language interpreter from Thorsten Ball's ["Writing An Interpreter in Go"](https://interpreterbook.com/), written in GNU Guile Scheme.
 
