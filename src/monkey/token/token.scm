@@ -22,10 +22,12 @@
             LPAREN RPAREN
             LBRACE RBRACE
             LBRACKET RBRACKET
+            PIPE
             
             ;; Keywords
             FUNCTION LET TRUE FALSE
-            IF ELSE RETURN WHILE
+            IF ELSE RETURN WHILE FOR
+            BREAK CONTINUE
             
             ;; Utility
             lookup-ident))
@@ -68,6 +70,7 @@
 (define RBRACE 'RBRACE)
 (define LBRACKET 'LBRACKET)
 (define RBRACKET 'RBRACKET)
+(define PIPE 'PIPE)
 
 ;; Keywords
 (define FUNCTION 'FUNCTION)
@@ -78,6 +81,9 @@
 (define ELSE 'ELSE)
 (define RETURN 'RETURN)
 (define WHILE 'WHILE)
+(define FOR 'FOR)
+(define BREAK 'BREAK)
+(define CONTINUE 'CONTINUE)
 
 ;; Keywords table
 (define keywords
@@ -88,7 +94,10 @@
     ("if" . ,IF)
     ("else" . ,ELSE)
     ("return" . ,RETURN)
-    ("while" . ,WHILE)))
+    ("while" . ,WHILE)
+    ("for" . ,FOR)
+    ("break" . ,BREAK)
+    ("continue" . ,CONTINUE)))
 
 (define (lookup-ident ident)
   "Look up identifier - return keyword token type or IDENT"

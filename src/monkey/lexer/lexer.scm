@@ -123,6 +123,7 @@
       (#\} (read-char! lexer) (make-token RBRACE "}"))
       (#\[ (read-char! lexer) (make-token LBRACKET "["))
       (#\] (read-char! lexer) (make-token RBRACKET "]"))
+      (#\| (read-char! lexer) (make-token PIPE "|"))
       
       (#\" (make-token STRING (read-string lexer)))
       

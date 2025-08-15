@@ -11,6 +11,8 @@
             BOOLEAN-OBJ
             NULL-OBJ
             RETURN-VALUE-OBJ
+            BREAK-OBJ
+            CONTINUE-OBJ
             ERROR-OBJ
             FUNCTION-OBJ
             STRING-OBJ
@@ -33,10 +35,20 @@
             null-object?
             *null*
             
+            ;; Boolean singletons
+            *true*
+            *false*
+            
             ;; Return value object
             make-return-value
             return-value?
             return-value-value
+            
+            ;; Break/Continue objects
+            break-object?
+            continue-object?
+            *break*
+            *continue*
             
             ;; Error object
             make-error-object
@@ -92,6 +104,8 @@
 (define BOOLEAN-OBJ 'BOOLEAN)
 (define NULL-OBJ 'NULL)
 (define RETURN-VALUE-OBJ 'RETURN_VALUE)
+(define BREAK-OBJ 'BREAK)
+(define CONTINUE-OBJ 'CONTINUE)
 (define ERROR-OBJ 'ERROR)
 (define FUNCTION-OBJ 'FUNCTION)
 (define STRING-OBJ 'STRING)
@@ -142,6 +156,26 @@
   (make-return-value value)
   return-value?
   (value return-value-value))
+
+;;; ============================================================================
+;;; Break Object (for loop control)
+;;; ============================================================================
+
+(define-record-type <break-object>
+  (make-break-object)
+  break-object?)
+
+(define *break* (make-break-object))
+
+;;; ============================================================================
+;;; Continue Object (for loop control)
+;;; ============================================================================
+
+(define-record-type <continue-object>
+  (make-continue-object)
+  continue-object?)
+
+(define *continue* (make-continue-object))
 
 ;;; ============================================================================
 ;;; Error Object

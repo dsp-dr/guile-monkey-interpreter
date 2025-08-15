@@ -90,6 +90,27 @@
             set-while-expression-condition!
             set-while-expression-body!
             
+            ;; For expression
+            make-for-expression
+            for-expression?
+            for-expression-token
+            for-expression-init
+            for-expression-condition
+            for-expression-update
+            for-expression-body
+            set-for-expression-init!
+            set-for-expression-condition!
+            set-for-expression-update!
+            set-for-expression-body!
+            
+            ;; Break/Continue
+            make-break-statement
+            break-statement?
+            break-statement-token
+            make-continue-statement
+            continue-statement?
+            continue-statement-token
+            
             make-function-literal
             function-literal?
             function-literal-token
@@ -237,6 +258,28 @@
   (token while-expression-token)
   (condition while-expression-condition set-while-expression-condition!)
   (body while-expression-body set-while-expression-body!))
+
+;; For Expression: for (init; condition; update) { body }
+(define-record-type <for-expression>
+  (make-for-expression token init condition update body)
+  for-expression?
+  (token for-expression-token)
+  (init for-expression-init set-for-expression-init!)
+  (condition for-expression-condition set-for-expression-condition!)
+  (update for-expression-update set-for-expression-update!)
+  (body for-expression-body set-for-expression-body!))
+
+;; Break Statement
+(define-record-type <break-statement>
+  (make-break-statement token)
+  break-statement?
+  (token break-statement-token))
+
+;; Continue Statement
+(define-record-type <continue-statement>
+  (make-continue-statement token)
+  continue-statement?
+  (token continue-statement-token))
 
 ;; Function Literal: fn(x, y) { x + y }
 (define-record-type <function-literal>

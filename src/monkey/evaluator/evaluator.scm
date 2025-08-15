@@ -63,6 +63,12 @@
     (eval-index-expression node env))
    ((while-expression? node)
     (eval-while-expression node env))
+   ((for-expression? node)
+    (eval-for-expression node env))
+   ((break-statement? node)
+    *break*)
+   ((continue-statement? node)
+    *continue*)
    
    (else 
     (new-error "Unknown node type: ~a" node))))
@@ -91,7 +97,9 @@
         result
         (let ((result (eval (car stmts) env)))
           (if (or (return-value? result)
-                  (error-object? result))
+                  (error-object? result)
+                  (break-object? result)
+                  (continue-object? result))
               result
               (loop (cdr stmts) result))))))
 
@@ -241,7 +249,57 @@
           (cond
            ((error-object? body-result) body-result)
            ((return-value? body-result) body-result)
+           ((break-object? body-result) result)  ; Break exits loop
+           ((continue-object? body-result) (loop result))  ; Continue restarts
            (else (loop body-result)))))
+       (else result)))))
+
+(define (eval-for-expression node env)
+  "Evaluate a for expression: for (init; condition; update) { body }"
+  ;; Create a new environment for the loop
+  (let ((loop-env (make-enclosed-environment env)))
+    ;; Evaluate init (if present)
+    (if (for-expression-init node)
+        (let ((init-result (eval (for-expression-init node) loop-env)))
+          (if (error-object? init-result)
+              init-result
+              ;; Continue with loop
+              (for-loop-body node loop-env)))
+        ;; No init, go straight to loop
+        (for-loop-body node loop-env))))
+
+(define (for-loop-body node loop-env)
+  "Helper for for loop body evaluation"
+  (let loop ((result *null*))
+    ;; Check condition (if present, otherwise infinite loop)
+    (let ((condition (if (for-expression-condition node)
+                        (eval (for-expression-condition node) loop-env)
+                        *true*)))
+      (cond
+       ((error-object? condition) condition)
+       ((is-truthy? condition)
+        ;; Evaluate body
+        (let ((body-result (eval (for-expression-body node) loop-env)))
+          (cond
+           ((error-object? body-result) body-result)
+           ((return-value? body-result) body-result)
+           ((break-object? body-result) result)  ; Break exits loop
+           ((continue-object? body-result)
+            ;; Continue: run update and restart loop
+            (if (for-expression-update node)
+                (let ((update-result (eval (for-expression-update node) loop-env)))
+                  (if (error-object? update-result)
+                      update-result
+                      (loop result)))
+                (loop result)))
+           (else
+            ;; Normal iteration: run update and continue
+            (if (for-expression-update node)
+                (let ((update-result (eval (for-expression-update node) loop-env)))
+                  (if (error-object? update-result)
+                      update-result
+                      (loop body-result)))
+                (loop body-result))))))
        (else result)))))
 
 (define (eval-identifier node env)
@@ -415,6 +473,7 @@
     ("trim" (make-builtin-object builtin-trim))
     ("replace" (make-builtin-object builtin-replace))
     ("substring" (make-builtin-object builtin-substring))
+    ("format" (make-builtin-object builtin-format))
     (_ #f)))
 
 (define (builtin-len args)
@@ -797,6 +856,44 @@
                 (new-error "invalid substring range: [~a, ~a] for string of length ~a"
                            start end len)
                 (make-string-object (substring str start end)))))))))
+
+;;; ============================================================================
+;;; String Interpolation
+;;; ============================================================================
+
+(define (builtin-format args)
+  "Format string with interpolation - format(template, ...values)"
+  (if (< (length args) 1)
+      (new-error "wrong number of arguments. got=~a, want=1+" (length args))
+      (let ((template-obj (car args))
+            (values (cdr args)))
+        (if (not (string-object? template-obj))
+            (new-error "first argument to 'format' must be STRING")
+            (let* ((template (string-object-value template-obj))
+                   ;; Replace {} placeholders with values
+                   (result (let loop ((str template)
+                                     (vals values)
+                                     (index 0))
+                            (if (null? vals)
+                                str
+                                (let* ((placeholder (string-append "{" (number->string index) "}"))
+                                      (val-str (if (string-object? (car vals))
+                                                  (string-object-value (car vals))
+                                                  (object->string (car vals))))
+                                      (new-str (string-replace str placeholder val-str)))
+                                  (loop new-str (cdr vals) (+ index 1)))))))
+              (make-string-object result))))))
+
+(define (string-replace str old new)
+  "Replace all occurrences of old with new in str"
+  (let loop ((s str))
+    (let ((pos (string-contains s old)))
+      (if pos
+          (loop (string-append 
+                 (substring s 0 pos)
+                 new
+                 (substring s (+ pos (string-length old)))))
+          s))))
 
 ;;; ============================================================================
 ;;; Quick Win Extensions - Math Functions
