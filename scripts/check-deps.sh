@@ -95,6 +95,26 @@ else
     echo -e "${RED}✗${NC} Source directory not found: $PROJECT_ROOT/src/monkey"
 fi
 
+# Check for optional but preferred development tools
+echo -e "\nChecking optional development tools..."
+if command -v gcc &> /dev/null; then
+    echo -e "${GREEN}✓${NC} gcc found (preferred for FFI extensions)"
+else
+    echo -e "${YELLOW}⚠${NC} gcc not found (optional - needed for FFI extensions)"
+fi
+
+if command -v gdb &> /dev/null; then
+    echo -e "${GREEN}✓${NC} gdb found (preferred for debugging)"
+else
+    echo -e "${YELLOW}⚠${NC} gdb not found (optional - useful for debugging)"
+fi
+
+if command -v tmux &> /dev/null; then
+    echo -e "${GREEN}✓${NC} tmux found (preferred for debugging sessions)"
+else
+    echo -e "${YELLOW}⚠${NC} tmux not found (optional - useful for tmux-guile.sh debugging)"
+fi
+
 echo -e "\n======================================================="
 echo -e "Dependency check complete!"
 echo -e "\nYou can run the interpreter from anywhere with:"
