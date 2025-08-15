@@ -132,7 +132,7 @@ test-04:
 	@echo ""
 	@echo "Running Chapter 04 - Extended Built-ins Tests..."
 	@echo "========================================="
-	@$(GUILE) $(GUILE_FLAGS) -L src src/test-chapter4.scm
+	@$(GUILE) $(GUILE_FLAGS) -L src tests/integration/test-chapter4.scm
 
 # Chapter 04 REPL (same as main REPL)
 repl-04: repl
@@ -179,8 +179,8 @@ clean:
 	@echo "Cleaning..."
 	@find . -name "*.go" -delete
 	@find . -name "*~" -delete
-	@find . -name "*.log" -delete
 	@rm -rf test-results/
+	@rm -f logs/*.log
 	@echo "Clean complete!"
 
 # Demo generation
@@ -228,16 +228,16 @@ visualize:
 	@echo "Mermaid Visualization Tools"
 	@echo "============================="
 	@echo "Generate AST diagram:"
-	@echo "  ./src/experiments/103-mermaid-visualizer/generate-ast-diagram.scm \"let x = 5;\""
+	@echo "  src/experiments/103-mermaid-visualizer/generate-ast-diagram.scm \"let x = 5;\""
 	@echo ""
 	@echo "Generate module graph:"
-	@echo "  cd src && ./experiments/103-mermaid-visualizer/generate-module-graph.scm"
+	@echo "  cd src && experiments/103-mermaid-visualizer/generate-module-graph.scm"
 	@echo ""
 	@echo "Generate control flow:"
-	@echo "  ./src/experiments/103-mermaid-visualizer/generate-control-flow.scm"
+	@echo "  src/experiments/103-mermaid-visualizer/generate-control-flow.scm"
 	@echo ""
 	@echo "Generate sequence diagram:"
-	@echo "  ./src/experiments/103-mermaid-visualizer/generate-sequence-diagram.scm"
+	@echo "  src/experiments/103-mermaid-visualizer/generate-sequence-diagram.scm"
 
 # Documentation targets
 tutorial:
@@ -268,6 +268,6 @@ test-quick:
 	@echo ""
 	@echo "Running Quick Win Extension Tests..."
 	@echo "========================================="
-	@$(GUILE) $(GUILE_FLAGS) -L src src/test-quick-wins.scm
+	@$(GUILE) $(GUILE_FLAGS) -L src tests/integration/test-quick-wins.scm
 
 .DEFAULT_GOAL := help
