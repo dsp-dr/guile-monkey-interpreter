@@ -91,7 +91,7 @@
           (format #t "    class ~a evaluator~%" id))
          ((string-contains name "ast")
           (format #t "    class ~a ast~%" id)))))
-    deps))
+    deps)))
 
 (define (analyze-directory dir)
   "Analyze all Scheme files in a directory"

@@ -229,7 +229,7 @@
      (else
       (format #t "    ~a[\"Unknown: ~a\"]~%" node-id node)
       (when parent-id
-        (format #t "    ~a --> ~a~%" parent-id node-id)))))
+        (format #t "    ~a --> ~a~%" parent-id node-id))))))
 
 (define (generate-ast-diagram input)
   "Generate Mermaid diagram for parsed input"
