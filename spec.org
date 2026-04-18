@@ -1,0 +1,123 @@
+#+TITLE: guile-monkey-interpreter Specification
+#+AUTHOR: dsp-dr
+#+DATE: 2026-04-18
+
+* Purpose
+
+A GNU Guile Scheme implementation of the Monkey programming language interpreter
+from Thorsten Ball's /Writing An Interpreter in Go/, extended with additional
+language features and built-in functions beyond the book.
+
+* Goals
+
+- Faithfully implement all four chapters of the book (lexer, parser, evaluator, extensions)
+- Adapt Go idioms to idiomatic Scheme (SRFI-9 records, pattern matching, closures)
+- Extend Monkey with practical features (for loops, break/continue, higher-order builtins)
+- Provide chapter-by-chapter snapshots so readers can follow along incrementally
+
+* Non-Goals
+
+- Production-grade interpreter (no sandboxing, no security boundaries)
+- Bytecode compilation or VM (this is a tree-walking interpreter only)
+- Compatibility with other Monkey implementations
+
+* Architecture
+
+** Module Map
+
+| Module                         | Role                                           |
+|--------------------------------+------------------------------------------------|
+| =src/monkey/token/token.scm=  | Token type definitions and keyword lookup       |
+| =src/monkey/lexer/lexer.scm=  | Lexer: input string to token stream             |
+| =src/monkey/ast/ast.scm=      | AST node record types (20+ node kinds)          |
+| =src/monkey/parser/parser.scm=| Pratt parser: token stream to AST               |
+| =src/monkey/object/object.scm=| Runtime object system (int, bool, string, array, hash, fn, builtin) |
+| =src/monkey/object/environment.scm= | Environment chains for variable scoping   |
+| =src/monkey/evaluator/evaluator.scm= | Tree-walking evaluator + 22 built-in functions |
+| =src/monkey/main.scm=         | REPL, file runner, CLI entry point              |
+| =src/monkey/ir/=              | Experimental IR layer (S-expression AST format, validator) |
+
+** Chapter Snapshots
+
+Self-contained implementations at each book milestone live under =code/=:
+
+| Directory | Content                                     |
+|-----------+---------------------------------------------|
+| =code/01= | Lexer only (tokenization REPL)              |
+| =code/02= | Lexer + Pratt parser (AST printing REPL)    |
+| =code/03= | Full evaluator (complete interpreter)        |
+| =code/04= | Extended built-ins (README only, uses =src/=)|
+
+** Data Flow
+
+#+begin_example
+Source string --> Lexer --> Token stream --> Parser --> AST --> Evaluator --> Object
+                                                                 |
+                                                          Environment (scoped bindings)
+#+end_example
+
+* Key Design Decisions
+
+- *Pratt parsing* for operator precedence, matching the book's approach
+- *SRFI-9 records* for all AST nodes and runtime objects (not plain lists)
+- *SRFI-69 hash tables* for parser dispatch (prefix/infix fn registries)
+- *call/cc* used for early return in parser via =with-return= macro
+- *Built-in functions* registered in a single match dispatch in the evaluator
+- *Immutable data model*: push/rest/delete return new objects, never mutate
+
+* Language Features Implemented
+
+** Core (Chapters 1-4)
+
+- Integer, boolean, string, array, hash literals
+- Let bindings, return statements, expression statements
+- Prefix operators: =!=, =-=
+- Infix operators: =+=, =-=, =*=, =/=, =<=, =>=, ===== , =!==
+- If/else expressions
+- First-class functions and closures
+- Index expressions for arrays and hashes
+- 6 core built-ins: len, first, last, rest, push, puts
+
+** Extensions Beyond the Book
+
+- While loops: =while (cond) { body }=
+- For loops: =for (init; cond; update) { body }=
+- Break and continue statements
+- Lambda shorthand: =|x| x + 1=
+- 9 Chapter-4 built-ins: type, str, int, split, join, contains, keys, values, delete
+- 11 quick-win built-ins: map, filter, reduce, sort, abs, min, max, trim, replace, substring, format
+
+* Test Suites
+
+| File                                   | Scope                      |
+|----------------------------------------+----------------------------|
+| =code/01/run-tests.scm=               | Lexer (Chapter 1)          |
+| =code/02/run-tests.scm=               | Parser (Chapter 2)         |
+| =code/03/run-tests.scm=               | Evaluator (Chapter 3)      |
+| =tests/lexer-test.scm=                | Standalone lexer tests      |
+| =tests/parser-test.scm=               | Standalone parser tests     |
+| =tests/integration/test-chapter4.scm= | Chapter 4 built-ins         |
+| =tests/integration/test-quick-wins.scm=| Quick-win extensions       |
+| =tests/integration/test-for-loops.scm=| For loop parsing/eval       |
+| =tests/integration/test-lambda-shorthand.scm= | Lambda shorthand    |
+| =tests/integration/test-all-features.scm= | Full feature integration |
+
+All tests use SRFI-64. Run with =make test=.
+
+* Current Status
+
+- Chapters 1-4: complete
+- All core Monkey features: working
+- For loops, break/continue: implemented and tested
+- Lambda shorthand: parser support implemented
+- IR layer (=src/monkey/ir/=): experimental, not integrated into main evaluator
+
+* Known Limitations
+
+- No tail call optimization (deep recursion will overflow the stack)
+- No module/import system
+- No pattern matching in the Monkey language itself
+- The =format()= built-in uses indexed placeholders (={0}=, ={1}=), not full interpolation syntax
+- =code/04/= contains only a README; Chapter 4 features live in =src/= directly
+- Static test badge in README (not CI-driven)
+- No sandboxing: the interpreter trusts all input

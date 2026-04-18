@@ -34,6 +34,8 @@ This project implements a complete interpreter for the Monkey programming langua
 - ✅ Built-in functions: `len`, `first`, `last`, `rest`, `push`, `puts`
 - ✅ REPL (Read-Eval-Print-Loop)
 - 🔧 **Extension**: While loops
+- 🔧 **Extension**: For loops with break/continue
+- 🔧 **Extension**: Lambda shorthand (`|x| x + 1`)
 - 🔧 **Extension**: Enhanced error messages
 - 🚀 **Chapter 4**: Extended built-in functions
   - `type()` - Get object type
@@ -56,6 +58,7 @@ This project implements a complete interpreter for the Monkey programming langua
   - `trim()` - Trim whitespace from strings
   - `replace()` - Replace substring
   - `substring()` - Extract substring
+  - `format()` - String interpolation with `{0}`, `{1}` placeholders
 
 ## Project Structure
 
@@ -295,9 +298,6 @@ Tests use SRFI-64:
 
 ### Planned
 
-- [ ] For loops
-- [ ] Break/Continue statements
-- [ ] String interpolation
 - [ ] Import/Module system
 - [ ] Tail call optimization
 - [ ] Pattern matching
