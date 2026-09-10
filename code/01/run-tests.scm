@@ -468,10 +468,12 @@
       (,SEMICOLON . ";")
       (,EOF . ""))))
 
+;; Capture the runner before test-end: Guile >= 3.0.10 resets test-runner-current to #f there.
+(define *runner* (test-runner-current))
 (test-end "Chapter 01 - Lexer Tests")
 
 ;; Print test summary
-(let ((runner (test-runner-current)))
+(let ((runner *runner*))
   (format #t "\n")
   (format #t "========================================\n")
   (format #t "Chapter 01 - Lexer Test Results\n")

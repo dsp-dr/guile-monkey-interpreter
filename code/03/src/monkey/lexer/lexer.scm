@@ -130,7 +130,7 @@
       
       ;; Multi-character tokens
       (_ (cond
-          ((char-alphabetic? ch)
+          ((or (char-alphabetic? ch) (char=? ch #\_))
            (let ((literal (read-identifier lexer)))
              (make-token (lookup-ident literal) literal)))
           
