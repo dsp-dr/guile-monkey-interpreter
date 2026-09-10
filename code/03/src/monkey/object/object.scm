@@ -32,6 +32,8 @@
             make-null-object
             null-object?
             *null*
+            *true*
+            *false*
             
             ;; Return value object
             make-return-value

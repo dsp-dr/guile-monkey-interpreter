@@ -416,13 +416,13 @@ addTwo(2);"))
 ;;; ============================================================================
 
 (test-group "Error handling"
-  (let ((tests '(("5 + true;"
+  (let ((tests '("5 + true;"
                   "5 + true; 5;"
                   "true + false;"
                   "5; true + false; 5"
                   "if (10 > 1) { true + false; }"
                   "foobar"
-                  "\"Hello\" - \"World\""))))
+                  "\"Hello\" - \"World\"")))
     
     (for-each
      (lambda (input)
@@ -478,10 +478,12 @@ fibonacci(10);"))
                       (integer-object-value result)
                       #f)))))
 
+;; Capture the runner before test-end: Guile >= 3.0.10 resets test-runner-current to #f there.
+(define *runner* (test-runner-current))
 (test-end "Chapter 03 - Evaluator Tests")
 
 ;; Print test summary
-(let ((runner (test-runner-current)))
+(let ((runner *runner*))
   (format #t "\n")
   (format #t "========================================\n")
   (format #t "Chapter 03 - Evaluator Test Results\n")

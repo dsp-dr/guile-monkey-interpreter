@@ -128,10 +128,12 @@ result
       (test-assert "complex program works" (array-object? result))
       (test-equal "result length" 3 (length (array-object-elements result))))))
 
+;; Capture the runner before test-end: Guile >= 3.0.10 resets test-runner-current to #f there.
+(define *runner* (test-runner-current))
 (test-end "Chapter 04 - Extended Built-ins")
 
 ;; Print summary
-(let ((runner (test-runner-current)))
+(let ((runner *runner*))
   (format #t "\n========================================\n")
   (format #t "Chapter 04 Test Results\n")
   (format #t "========================================\n")

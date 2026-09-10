@@ -468,8 +468,7 @@
                       (if (not (expect-peek! parser RBRACE))
                           #f
                           (make-hash-literal hash-token 
-                                            (reverse (cons (cons key value) pairs)))))))))))))
-
+                                            (reverse (cons (cons key value) pairs))))))))))))))
 (define (parse-expression-list parser end-token)
   "Parse list of expressions until end-token"
   (let loop ((expressions '()))
@@ -590,4 +589,4 @@
 (define (parser-error! parser msg)
   "Add a generic error to the parser"
   (set-parser-errors! parser
-                      (cons msg (parser-errors parser))))))
+                      (cons msg (parser-errors parser))))

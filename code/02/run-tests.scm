@@ -486,10 +486,12 @@ let result = fibonacci(10);
     (test-assert "Second value is call"
                  (call-expression? (let-statement-value (cadr stmts))))))
 
+;; Capture the runner before test-end: Guile >= 3.0.10 resets test-runner-current to #f there.
+(define *runner* (test-runner-current))
 (test-end "Chapter 02 - Parser Tests")
 
 ;; Print test summary
-(let ((runner (test-runner-current)))
+(let ((runner *runner*))
   (format #t "\n")
   (format #t "========================================\n")
   (format #t "Chapter 02 - Parser Test Results\n")
